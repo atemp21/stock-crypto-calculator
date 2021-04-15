@@ -1,15 +1,15 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 import useCachedResources from './hooks/UseCachedResources';
 import CalculatorScreen from './screens/CalculatorScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import { Ionicons } from '@expo/vector-icons';
+import {getData} from './hooks/PersistentStorage';
 
 export default function App() {
 
+  const darkModeEnabled =  getData("theme").toString() === "1" ? true : false
   const isLoaded = useCachedResources();
   const Tab = createBottomTabNavigator();
 

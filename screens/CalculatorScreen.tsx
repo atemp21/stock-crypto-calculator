@@ -2,57 +2,63 @@ import { Button, Container, Content, Form, Input, Item, Label, Text } from 'nati
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
-export default function CalculatorScreen() {
+export default class CalculatorScreen extends React.Component{
+  constructor(props: any){
+    super(props)
+  }
 
-  const [shares, setShares] = React.useState('');
-  const [buyPrice, setBuy] = React.useState('');
-  const [sellPrice, setSell] = React.useState('');
-  const [buyComm, setBuyComm] = React.useState('0.00');
-  const [sellComm, setSellComm] = React.useState('0.00');
-  var [profitLoss, setProfitLoss] = React.useState('');
-  var [totalBuyPrice, setTotalBuyPrice] = React.useState('0');
-  var [totalSellPrice, setTotalSellPrice] = React.useState('0');
-  var [formComplete, setFormComplete] = React.useState(false);
+  state ={
+    shares: '',
+    buyPrice: '',
+    sellPrice: '',
+    buyComm: '0.00',
+    sellComm: '0.00',
+    profitLoss: '',
+    totalBuyPrice: '0',
+    totalSellPrice: '0',
+    formComplete: false
+  }
 
-  var formatter = new Intl.NumberFormat('en-US', {
+  formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD'
   });
 
-  const CalculateProfitLoss = () =>{
+  CalculateProfitLoss = () =>{
 
-    if(!IsFormComplete())
+    if(!this.IsFormComplete())
       return;
 
-    let s = parseFloat(shares);
-    let sp = parseFloat(sellPrice);
-    let bp = parseFloat(buyPrice);
-    let bc = parseFloat(buyComm);
-    let sc = parseFloat(sellComm);
+    let s = parseFloat(this.state.shares);
+    let sp = parseFloat(this.state.sellPrice);
+    let bp = parseFloat(this.state.buyPrice);
+    let bc = parseFloat(this.state.buyComm);
+    let sc = parseFloat(this.state.sellComm);
 
     let profitloss = (s * sp) - (s * bp) - bc - sc;
 
-    setProfitLoss(FormatAsCurrency(profitloss));
-    setTotalBuyPrice(FormatAsCurrency(s * bp));
-    setTotalSellPrice(FormatAsCurrency(s * sp));
+    this.setState({profitLoss: this.FormatAsCurrency(profitloss)})
+    this.setState({totalBuyPrice: this.FormatAsCurrency(s * bp - bc)})
+    this.setState({totalSellPrice: this.FormatAsCurrency(s * sp - sc)}) 
   }
 
-  const FormatAsCurrency = (price: number): string => {
-    return formatter.format(price)
+  FormatAsCurrency = (price: number): string => {
+    return this.formatter.format(price)
   }
 
-   const IsFormComplete = (): boolean => {
+  IsFormComplete = (): boolean => {
 
-    var filled = (!!shares && !!buyPrice && !!sellPrice);
+    var filled = (!!this.state.shares && !!this.state.buyPrice && !!this.state.sellPrice);
 
     if(filled)
-      setFormComplete(true);
+      this.setState({formComplete: true})
     else
-      setFormComplete(false);
+      this.setState({formComplete: true})
 
     return filled;
   }
 
+  render(){
   return (
     <Container>
       <Content>
@@ -62,8 +68,8 @@ export default function CalculatorScreen() {
             <Item style={styles.formItem} stackedLabel>
               <Label>Shares</Label>
               <Input
-              value={shares}
-              onChangeText={value => setShares(value)}
+              value={this.state.shares}
+              onChangeText={shares => this.setState({shares})}
               keyboardType='numeric'
               placeholder='1000'
               />
@@ -72,8 +78,8 @@ export default function CalculatorScreen() {
             <Item style={styles.formItem}  stackedLabel>
               <Label>Buy price</Label>
               <Input
-              value={buyPrice}
-              onChangeText={value => setBuy(value)}
+              value={this.state.buyPrice}
+              onChangeText={buyPrice => this.setState({buyPrice})}
               keyboardType='numbers-and-punctuation'
               placeholder='0.0000'
               />
@@ -82,8 +88,8 @@ export default function CalculatorScreen() {
             <Item style={styles.formItem} stackedLabel>
               <Label>Sell price</Label>
               <Input
-              value={sellPrice}
-              onChangeText={value => setSell(value)}
+              value={this.state.sellPrice}
+              onChangeText={sellPrice => this.setState({sellPrice})}
               keyboardType='numbers-and-punctuation'
               placeholder='0.0000'
               />
@@ -92,8 +98,8 @@ export default function CalculatorScreen() {
             <Item style={styles.formItem} stackedLabel>
               <Label>Buy commission</Label>
               <Input
-              value={buyComm}
-              onChangeText={value => setBuyComm(value)}
+              value={this.state.buyComm}
+              onChangeText={buyComm => this.setState({buyComm})}
               keyboardType='numbers-and-punctuation'
               placeholder='0.00'
               />
@@ -102,8 +108,8 @@ export default function CalculatorScreen() {
             <Item style={styles.formItem} stackedLabel>
               <Label>Sell commission</Label>
               <Input
-              value={sellComm}
-              onChangeText={value => setSellComm(value)}
+              value={this.state.sellComm}
+              onChangeText={sellComm => this.setState({sellComm})}
               keyboardType='numbers-and-punctuation'
               placeholder='0.00'
               />
@@ -111,28 +117,28 @@ export default function CalculatorScreen() {
           </Form>
 
           <Button style={styles.button}
-            onPress={CalculateProfitLoss}
+            onPress={this.CalculateProfitLoss}
           >
             <Text style={styles.buttonText}>Calculate</Text>
           </Button>
         </Container>
         
-        {formComplete &&
+        {this.state.formComplete &&
         <Container style={{width: '75%', alignSelf:'center', alignContent: 'center', marginTop: 20}}>
 
           <Container style={styles.totalContainer}>
               <Text style={styles.textLabel}>Purchase price</Text>
-              <Text style={styles.textPrice}>{totalBuyPrice}</Text>
+              <Text style={styles.textPrice}>{this.state.totalBuyPrice}</Text>
           </Container>
 
           <Container style={styles.totalContainer}>
               <Text style={styles.textLabel}>Sell price</Text>
-              <Text style={styles.textPrice}>{totalSellPrice}</Text>
+              <Text style={styles.textPrice}>{this.state.totalSellPrice}</Text>
           </Container>
 
           <Container style={styles.totalContainer}>
               <Text style={styles.textLabel}>Profit/Loss</Text>
-              <Text style={styles.textPrice}>{profitLoss}</Text>
+              <Text style={styles.textPrice}>{this.state.profitLoss}</Text>
           </Container>
         
         </Container>
@@ -141,6 +147,7 @@ export default function CalculatorScreen() {
     </Container>
   );
 }
+}
 
 const styles = StyleSheet.create({
   formItem: {
@@ -148,7 +155,8 @@ const styles = StyleSheet.create({
   },
   button:{
     alignSelf: 'center',
-    marginTop: 15
+    marginTop: 15,
+    backgroundColor:'tomato'
   },
   buttonText: {
     fontFamily: 'System',
