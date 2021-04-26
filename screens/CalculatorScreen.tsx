@@ -1,6 +1,7 @@
 import { Button, Container, Content, Form, Input, Item, Label, Text } from 'native-base';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
+import { getData } from '../hooks/PersistentStorage';
 
 export default class CalculatorScreen extends React.Component{
   constructor(props: any){
@@ -11,13 +12,23 @@ export default class CalculatorScreen extends React.Component{
     shares: '',
     buyPrice: '',
     sellPrice: '',
-    buyComm: '0.00',
-    sellComm: '0.00',
+    buyComm: '',
+    sellComm: '',
     profitLoss: '',
     totalBuyPrice: '0',
     totalSellPrice: '0',
     formComplete: false
   }
+
+  componentDidMount(){
+    getData("buyingCommission").then((res) => {
+        this.setState({buyComm: res.data ? res.data : '0.00'})
+    })
+    
+    getData("sellingCommission").then((res)=>{
+        this.setState({sellComm: res.data ? res.data : '0.00'})
+    })
+}
 
   formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',

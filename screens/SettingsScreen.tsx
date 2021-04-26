@@ -34,6 +34,7 @@ export default class SettingsScreen extends React.Component{
             case "buyingCommission":
                 storeData(input, this.state.buyingCommission)
                 break;
+            
         }
     }
 
@@ -62,6 +63,7 @@ export default class SettingsScreen extends React.Component{
                             value={this.state.sellingCommission}
                             onChangeText={sellingCommission => this.setState({sellingCommission})}
                             keyboardType='numbers-and-punctuation'
+                            onBlur={() => this.saveData("sellingCommission")}
                         />
                     </Item>
                 </Container>
